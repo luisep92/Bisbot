@@ -1,0 +1,33 @@
+# Core Discord bot
+discord.py[voice]>=2.3.0
+python-dotenv>=1.0.0
+
+# AI / Conversational
+anthropic>=0.18.0
+
+# Voice synthesis (XTTS)
+TTS>=0.22.0
+torch>=2.0.0
+torchaudio>=2.0.0
+
+# Speech-to-text (Whisper)
+openai-whisper>=20231117
+
+# Audio processing
+pydub>=0.25.1
+numpy>=1.24.0
+
+# Testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Optional: For alternative implementations (uncomment if needed)
+# edge-tts>=6.1.0  # Alternative TTS (no GPU needed)
+# SpeechRecognition>=3.10.0  # Alternative STT
+# httpx>=0.24.0  # For Ollama integration
+
+# Note: FFmpeg is required for audio handling but must be installed separately
+# Install FFmpeg:
+# - Ubuntu/Debian: sudo apt install ffmpeg
+# - macOS: brew install ffmpeg
+# - Windows: Download from https://ffmpeg.org/download.html
