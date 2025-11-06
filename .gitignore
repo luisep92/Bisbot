@@ -1,0 +1,23 @@
+# Executables
+regex_solution
+regex_research
+example_usage
+
+# Object files
+*.o
+*.obj
+
+# Compiled binaries
+*.exe
+*.out
+
+# Editor files
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
