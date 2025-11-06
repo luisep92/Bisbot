@@ -1,19 +1,23 @@
 CXX = g++
 CXXFLAGS = -std=c++17 -Wall -Wextra
-LDFLAGS = -lpcre2-8
 
-TARGET = regex_test
-SRC = regex_test.cpp
+all: regex_test regex_test_std
 
-all: $(TARGET)
+regex_test: regex_test.cpp
+	$(CXX) $(CXXFLAGS) -o regex_test regex_test.cpp -lpcre2-8
 
-$(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC) $(LDFLAGS)
+regex_test_std: regex_test_std.cpp
+	$(CXX) $(CXXFLAGS) -o regex_test_std regex_test_std.cpp
 
-test: $(TARGET)
-	./$(TARGET)
+test: regex_test
+	@echo "=== PCRE2 version (CORRECT) ==="
+	./regex_test
+
+test-std: regex_test_std
+	@echo "=== std::regex version (LIMITED) ==="
+	./regex_test_std
 
 clean:
-	rm -f $(TARGET)
+	rm -f regex_test regex_test_std
 
-.PHONY: all test clean
+.PHONY: all test test-std clean
