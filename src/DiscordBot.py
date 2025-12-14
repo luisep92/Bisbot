@@ -10,8 +10,8 @@ class DiscordBot(discord.Client):
         self.message_history = MessageHistory()
         self.message_handler = DiscordMessageHandler()
         self.inactive_timer = InactiveTimer(
-            seconds=15,
-            callback=self.on_inactive
+            seconds = 30 * 60, # 30 minutes
+            callback = self.on_inactive
         )
 
     async def on_inactive(self):
