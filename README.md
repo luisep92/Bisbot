@@ -1,79 +1,57 @@
 # Bisbot
 
-Bisbot is a **meme Discord bot** that uses ChatGPT to role‑play *David Bisbal* inside the **Beat Saber España** Discord server.
+Bisbot is a Discord bot that uses ChatGPT to role-play *David Bisbal* inside the **Beat Saber España** Discord server.
 
-The goal is simple: instead of behaving like a classic command‑based bot, Bisbot tries to behave like a regular user — sometimes talking, sometimes staying silent.
+The bot is intended to be used only on **December 28th (Día de los Santos Inocentes)**.
 
----
-
-## What it does
-
-* Uses ChatGPT to generate in‑character responses
-* Decides **when to speak**, not just what to say
-* Joins conversations after some activity
-* Responds to mentions, replies and specific keywords
-* Stays passive most of the time
-
-No commands, no utilities — just presence.
+Instead of using commands, Bisbot behaves like a regular user:
+sometimes it speaks, sometimes it stays silent, and most of the time it just reads.
 
 ---
 
-## Why this structure
+## Behavior
 
-Even though this is a meme project, the code is intentionally structured:
-
-* Bot logic is separated from Discord I/O
-* State is tracked per channel (message count, history, inactivity)
-* ChatGPT access is wrapped behind a small adapter
-* The bot can be tested **without connecting to Discord**
-
-This makes it easier to experiment, refactor and extend without breaking behavior.
+- Generates in-character responses using ChatGPT
+- Decides **when to speak**, not just what to say
+- Responds to:
+  - Mentions
+  - Replies to its own messages
+  - Specific keywords
+- Joins conversations automatically after a message threshold
+- Remains passive by default
+- Triggers an inactivity callback after long silence
 
 ---
 
-## Project structure
+## Structure
 
-```
+```text
 src/
-├── DiscordBot.py       # Core bot logic (when to respond)
-├── Helpers.py          # Counters, history and inactivity timer
-├── GptWrapper.py      # ChatGPT wrapper + context handling
-├── Mocks.py           # Discord mocks for testing
-└── Test_DiscordBot.py # Basic behavior test
+├── DiscordBot.py   # Core behavior logic
+├── Helpers.py      # Counters, history and inactivity timer
+├── GptWrapper.py   # ChatGPT wrapper
+└── Mocks.py        # Discord mocks
+tests/
+└── test_discord_bot.py   # Behavior tests (pytest + asyncio)
 ```
 
 ---
 
 ## Testing
 
-The project includes a basic async test that:
+The project includes a full behavior-driven test suite using pytest.
+All branches of the message handling logic are covered, including:
 
-* Mocks Discord messages, users and channels
-* Simulates the bot user (since `discord.Client.user` is read‑only)
-* Verifies that the bot only responds when expected
-
-The goal is not full coverage, but **behavior validation**.
+- Positive and negative interaction cases
+- Priority rules between triggers
+- Inactivity handling using a real async timer
+- Tests run without Discord or network access
 
 ---
 
 ## Current state
 
-* Core Discord bot logic implemented
-* Message‑based interaction rules working
-* ChatGPT wrapper ready but not fully wired into the bot flow
-* Testable without Discord
-
----
-
-## Possible next steps
-
-* Plug `GptWrapper` into real responses
-* Improve interaction rules and thresholds
-* Add long‑term memory or summarization
-* Expand tests
-
----
-
-## Notes
-
-This is a small personal project built for fun, but treated with enough technical care to keep it clean, testable and easy to evolve.
+- Core bot behavior implemented
+- ChatGPT wrapper ready
+- Message handling logic fully covered by tests
+- Deterministic async test suite

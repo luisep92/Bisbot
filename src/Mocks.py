@@ -2,11 +2,18 @@ import discord
 from DiscordBot import DiscordBot
   
 class MockMessageHandler:
+    def __init__(self):
+        self.handled_messages = []
+        self.inactive_calls = 0
+        
     async def handle(self, message: discord.Message, content: str):
         print("{" + content + "}")
+        self.handled_messages.append(content)
         
     async def handle_inactive(self):
-        print("Inactivo!")
+        print("Inactive!")
+        self.handled_messages.append("inactive")
+        self.inactive_calls += 1
         
 class MockAuthor:
     def __init__(self, name, bot=False, id=1):
@@ -16,11 +23,23 @@ class MockAuthor:
 
 
 class MockChannel:
-    def __init__(self, id=123):
+    def __init__(self, id=123, replied_message=None):
         self.id = id
+        self._replied_message = replied_message
 
     async def fetch_message(self, message_id):
-        return None  # no replies por ahora
+        """
+        Mock implementation of discord.TextChannel.fetch_message().
+
+        In the real Discord API, this method retrieves a message by its ID.
+        The bot uses it to determine whether an incoming message is a reply
+        to one of its own messages.
+
+        For testing purposes, we do not need real message lookup or network
+        access. Instead, this mock returns a preconfigured message
+        (`_replied_message`) that simulates the original message being replied to.
+        """
+        return self._replied_message
 
 
 class MockMessage:
