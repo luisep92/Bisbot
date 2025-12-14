@@ -4,12 +4,34 @@ import time
 from collections import deque # ring buffer
 
 class MessageHistory:
+    """
+    Stores a limited rolling history of messages per Discord channel.
+
+    The history is maintained as a fixed-size queue (FIFO) per channel,
+    keeping only the most recent messages up to a configured limit.
+    """
+
     def __init__(self, max_messages: int = 10):
+        """
+        Initialize the message history container.
+
+        Args:
+            max_messages: Maximum number of messages to keep per channel.
+        """
         self.max_messages = max_messages
         # channel_id -> deque[(author, content)]
         self.history: dict[int, deque[tuple[str, str]]] = {}
 
     def add(self, message: discord.Message) -> None:
+        """
+        Add a message to the history of its channel.
+
+        If the channel does not yet have a history, it is created.
+        When the maximum size is reached, older messages are discarded.
+
+        Args:
+            message: Discord message to store.
+        """
         channel_id = message.channel.id
         if channel_id not in self.history:
             self.history[channel_id] = deque(maxlen=self.max_messages)
@@ -19,6 +41,19 @@ class MessageHistory:
         )
 
     def get_formatted(self, channel_id: int) -> str:
+        """
+        Retrieve the formatted message history for a channel.
+
+        Messages are returned as a single string in chronological order,
+        formatted as '<author>: <message>' per line.
+
+        Args:
+            channel_id: Discord channel identifier.
+
+        Returns:
+            A formatted string containing the message history,
+            or an empty string if no history exists for the channel.
+        """
         if channel_id not in self.history:
             return ""
 
@@ -29,45 +64,100 @@ class MessageHistory:
 
 
 class MessageCounter:
+    """
+    Counts messages per channel and signals when a threshold is reached.
+
+    Intended for rate limiting or triggering actions after a certain
+    number of messages have been received.
+    """
+
     def __init__(self, max_messages: int = 10):
+        """
+        Initialize the message counter.
+
+        Args:
+            max_messages: Number of messages required to trigger the limit.
+        """
         self.max_messages = max_messages
         # channel_id -> count
         self.counter: dict[int, int] = {}
 
     def increment(self, channel_id: int) -> bool:
+        """
+        Increment the message count for a channel.
+
+        Args:
+            channel_id: Discord channel identifier.
+
+        Returns:
+            True if the message count has reached or exceeded the limit,
+            False otherwise.
+        """
         self.counter[channel_id] = self.counter.get(channel_id, 0) + 1
         return self.counter[channel_id] >= self.max_messages
 
-
     def reset(self, channel_id: int) -> None:
+        """
+        Reset the message count for a channel.
+
+        Args:
+            channel_id: Discord channel identifier.
+        """
         self.counter[channel_id] = 0
 
 
 class InactiveTimer:
+    """
+    Executes an asynchronous callback after a period of inactivity.
+
+    The timer can be reset or cancelled. Resetting restarts the countdown.
+    Only one timer task is active at any given time.
+    """
+
     def __init__(self, seconds: int, callback):
+        """
+        Initialize the inactivity timer.
+
+        Args:
+            seconds: Duration of inactivity before triggering the callback.
+            callback: Asynchronous callable executed when the timer expires.
+        """
         self.seconds = seconds
         self.callback = callback
         self._task: asyncio.Task | None = None
         self.reset()
 
     def reset(self):
+        """
+        Reset the timer and restart the inactivity countdown.
+
+        Any existing timer task is cancelled before starting a new one.
+        """
         self.cancel()
         self._task = asyncio.create_task(self._run())
 
     def cancel(self):
+        """
+        Cancel the currently running timer task, if any.
+        """
         if self._task and not self._task.done():
             self._task.cancel()
 
     async def _run(self):
+        """
+        Internal coroutine that waits for the inactivity period
+        and executes the callback if not cancelled.
+        """
         try:
             await asyncio.sleep(self.seconds)
             await self.callback()
         except asyncio.CancelledError:
             pass
 
-
-        
 class DiscordMessageHandler:
+    """
+    Defines how and where a message is sent from the bot to the user. In this case, send the message a discord channel.
+    """
     async def handle(self, message: discord.Message, content: str):
         await message.channel.send(content)
         
