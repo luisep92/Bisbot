@@ -82,7 +82,7 @@ class BisbalWrapper():
         return Response(raw)
         
     def store_context(self, response: Response):
-        # To clear memory if context gets too big. 
+        # Clear memory if context gets too big.
         # This is done before saving the next proposal in order to remember the last interacion.
         # if len(self.context) > 4000:
         #     self.context = INITIAL_CONTEXT

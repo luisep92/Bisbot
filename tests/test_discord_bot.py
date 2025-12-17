@@ -20,9 +20,9 @@ from Mocks import (
 async def server():
     """
     Default fixture for testing containing:
-    - bot: MockDiscordBot
-    - channel: MockChannel
-    - sender: MockAuthor
+    - bot: Mockup for the discord client class (MockDiscordBot)
+    - channel: The channel where the conversation takes place (MockChannel)
+    - sender: The user who sent the message (MockAuthor)
     """
     bot = MockDiscordBot()
     bot._test_user = MockAuthor("BisbalBot", bot=True, id=999)
@@ -43,7 +43,7 @@ async def test_bot_responds_on_keyword(server):
 
 @pytest.mark.asyncio
 async def test_bot_responds_on_mention(server):
-    msg = MockMessage("Mensaje", server.sender, server.channel, mentions=[server.bot.user])
+    msg = MockMessage("Messaje", server.sender, server.channel, mentions=[server.bot.user])
     await server.bot.on_message(msg)
     assert len(server.bot.message_handler.handled_messages) == 1
 
@@ -95,7 +95,6 @@ async def test_inactive_timer_triggers(server):
     assert server.bot.message_handler.inactive_calls == 0
     await asyncio.sleep(0.6)
     assert server.bot.message_handler.inactive_calls == 1
-
 
 @pytest.mark.asyncio
 async def test_bot_ignores_other_bots(server):
