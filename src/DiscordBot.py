@@ -36,22 +36,23 @@ class DiscordBot(discord.Client):
         should_join = self.message_counter.increment(channel)
         self.message_history.add(message)
         self.inactive_timer.reset()
+        history = self.message_history.get_formatted(channel)
         
         if self._is_mention_to_me(message):
-            await self.message_handler.handle(message, "¡Me han llamado!")
+            await self.message_handler.handle(message, trigger="mention", history=history)
             return
             
         if await self._is_reply_to_me(message):
-            await self.message_handler.handle(message, "Me han respondido!")
+            await self.message_handler.handle(message, trigger="reply", history=history)
             return
             
         if self._contains_keywords(message):
-            await self.message_handler.handle(message, "Contiene keywords!")
+            await self.message_handler.handle(message, trigger="keyword", history=history)
             return
 
         if should_join:
             self.message_counter.reset(channel)
-            await self.message_handler.handle(message, "Han pasado 10 mensajes desde mi ultima interaccion en este canal")
+            await self.message_handler.handle(message, trigger="join", history=history)
             return
 
 

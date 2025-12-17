@@ -1,6 +1,6 @@
 import discord
 import asyncio
-import time
+import json
 from collections import deque # ring buffer
 
 class MessageHistory:
@@ -156,10 +156,20 @@ class InactiveTimer:
 
 class DiscordMessageHandler:
     """
-    Defines how and where a message is sent from the bot to the user. In this case, send the message a discord channel.
+    Handles incoming messages and sends the bot's response back to Discord.
     """
-    async def handle(self, message: discord.Message, content: str):
-        await message.channel.send(content)
-        
-    async def handle_inactive(self):
-        pass
+    async def handle(self,message: discord.Message, content: str, history: str):
+        payload = {
+            "trigger": content,
+            "channel_id": message.channel.id,
+            "author": message.author.display_name,
+            "author_id": message.author.id,
+            "message": message.content,
+            "history": history
+        }
+
+        await message.channel.send(
+            "```json\n"
+            + json.dumps(payload, indent=2, ensure_ascii=False)
+            + "\n```"
+        )

@@ -6,12 +6,10 @@ class MockMessageHandler:
         self.handled_messages = []
         self.inactive_calls = 0
         
-    async def handle(self, message: discord.Message, content: str):
-        print("{" + content + "}")
-        self.handled_messages.append(content)
+    async def handle(self, message: discord.Message, trigger: str, history: str = []):
+        self.handled_messages.append(trigger)
         
     async def handle_inactive(self):
-        print("Inactive!")
         self.handled_messages.append("inactive")
         self.inactive_calls += 1
         
@@ -43,14 +41,7 @@ class MockChannel:
 
 
 class MockMessage:
-    def __init__(
-        self,
-        content: str,
-        author: MockAuthor,
-        channel: MockChannel,
-        mentions=None,
-        reference=None
-    ):
+    def __init__(self, content: str, author: MockAuthor, channel: MockChannel, mentions=None, reference=None):
         self.content = content
         self.author = author
         self.channel = channel
