@@ -15,11 +15,13 @@ class DiscordBot(discord.Client):
         )
 
     async def on_inactive(self):
-        await self.message_handler.handle_inactive()
         self.inactive_timer.reset()
+        await self.message_handler.handle_inactive(self)
+
 
     async def on_ready(self):
-        print(f"Conectado como {self.user}")
+        print(f"Connected as {self.user}")
+        self.inactive_timer.init()
 
     async def on_message(self, message: discord.Message):
         if message.author == self.user:
@@ -79,7 +81,7 @@ class DiscordBot(discord.Client):
         keywords = [
             "david", "bisbal",
             "buleria", "bulería",
-            "camina y",
+            "camina",
             "babel",
             "almeria", "almería",
             "maquinas", "máquinas", "makinas",

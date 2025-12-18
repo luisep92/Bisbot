@@ -3,6 +3,7 @@ import asyncio
 import json
 from collections import deque # ring buffer
 
+
 class MessageHistory:
     """
     Stores a limited rolling history of messages per Discord channel.
@@ -125,6 +126,8 @@ class InactiveTimer:
         self.seconds = seconds
         self.callback = callback
         self._task: asyncio.Task | None = None
+
+    def init(self):
         self.reset()
 
     def reset(self):
@@ -158,13 +161,17 @@ class DiscordMessageHandler:
     """
     Handles incoming messages and sends the bot's response back to Discord.
     """
-    async def handle(self,message: discord.Message, content: str, history: str):
+    async def handle(self,message: discord.Message, trigger: str, history: str):
+        content = message.content
+        for user in message.mentions:
+            content = content.replace(f"<@{user.id}>", "").replace(f"<@!{user.id}>", "")
+
+        content = content.strip()
         payload = {
-            "trigger": content,
-            "channel_id": message.channel.id,
+            "trigger": trigger,
+            "channel_name": message.channel.name,
             "author": message.author.display_name,
-            "author_id": message.author.id,
-            "message": message.content,
+            "message": content,
             "history": history
         }
 

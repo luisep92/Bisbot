@@ -92,6 +92,7 @@ async def test_inactive_timer_triggers(server):
         seconds=0.5,
         callback=server.bot.on_inactive
     )
+    server.bot.inactive_timer.init()
     assert server.bot.message_handler.inactive_calls == 0
     await asyncio.sleep(0.6)
     assert server.bot.message_handler.inactive_calls == 1

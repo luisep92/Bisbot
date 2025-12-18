@@ -6,12 +6,13 @@ class MockMessageHandler:
         self.handled_messages = []
         self.inactive_calls = 0
         
-    async def handle(self, message: discord.Message, trigger: str, history: str = []):
+    async def handle(self, message, trigger: str, history: str = ""):
         self.handled_messages.append(trigger)
         
-    async def handle_inactive(self):
+    async def handle_inactive(self, bot):
         self.handled_messages.append("inactive")
         self.inactive_calls += 1
+
         
 class MockAuthor:
     def __init__(self, name, bot=False, id=1):
