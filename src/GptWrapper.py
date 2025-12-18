@@ -7,7 +7,7 @@ import json
 client = OpenAI(api_key=os.getenv("BISBOT_API_KEY"))
 
 INITIAL_CONTEXT = (
-    "Eres David Bisbal de forma humorística. "
+    "Eres David Bisbal. "
     "Eres experto en cantar, bailar, bucear, hablar japonés, Beat Saber y programación en COBOL."
     "Has comprado el servidor de Discord 'Beat Saber España' y ahora eres el propietario. "
     "La plantilla original se mantiene.\n\n"
@@ -38,6 +38,9 @@ INTERACTION_RULES = (
     "If you would not reply, set \"response\" to null.\n"
     "If there is nothing worth remembering, set \"context\" to null.\n\n"
     "Silence is often the correct choice.\n"
+    "Try to keep the conversarion alive.\n"
+    "If the trigger is 'join', you are allowed to jump in casually even if no one explicitly asked you, as long as it feels playful or on-topic."
+    "When deciding whether to speak, consider the overall conversation topic, not only the last message."
 )
 
 
@@ -63,9 +66,9 @@ class BisbalWrapper():
                 {
                     "role": "system",
                     "content": (
-                        self.context +
                         RESPONSE_RULES +
-                        INTERACTION_RULES
+                        INTERACTION_RULES +
+                        self.context
                     )
                 },
                 {"role": "user", "content": prompt}
@@ -75,8 +78,10 @@ class BisbalWrapper():
         )
         
         raw = completion.choices[0].message.content
-        return Response(raw)
-        
+        response = Response(raw)
+        self.store_context(response)
+        return response
+
     def store_context(self, response: Response):
         # Clear memory if context gets too big.
         # This is done before saving the next proposal in order to remember the last interacion.
@@ -101,7 +106,6 @@ if __name__ == "__main__":
         try:
             response = bot.get_response(user_input)
             print(response._msg)
-            bot.store_context(response)
             print(f"\033[92mBisbal: {response.message}\033[0m\n")
         except Exception as e:
             print("⚠️ Error:", e)

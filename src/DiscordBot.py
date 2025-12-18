@@ -15,9 +15,8 @@ class DiscordBot(discord.Client):
         )
 
     async def on_inactive(self):
-        self.inactive_timer.reset()
         await self.message_handler.handle_inactive(self)
-
+        self.inactive_timer.reset()
 
     async def on_ready(self):
         print(f"Connected as {self.user}")

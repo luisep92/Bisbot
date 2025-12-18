@@ -2,7 +2,9 @@ import discord
 import asyncio
 import json
 from collections import deque # ring buffer
+from GptWrapper import BisbalWrapper
 
+LLM = BisbalWrapper()
 
 class MessageHistory:
     """
@@ -12,7 +14,7 @@ class MessageHistory:
     keeping only the most recent messages up to a configured limit.
     """
 
-    def __init__(self, max_messages: int = 10):
+    def __init__(self, max_messages: int = 20):
         """
         Initialize the message history container.
 
@@ -175,11 +177,14 @@ class DiscordMessageHandler:
             "history": history
         }
 
-        await message.channel.send(
-            "```json\n"
-            + json.dumps(payload, indent=2, ensure_ascii=False)
-            + "\n```"
-        )
+        prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+        print("Send: " + prompt)
+        response = LLM.get_response(prompt)
+        print(f"Response context: {response.memory_proposal}")
+        print(f"\033[92mResponse message: {response.message}\033[0m")
+        
+        if response.message:
+            await message.channel.send(response.message)
 
     async def handle_inactive(self, bot):
         """
@@ -189,7 +194,7 @@ class DiscordMessageHandler:
         Args:
             bot: is expected to be a DiscordBot instance.
         """
-        channel = discord.utils.get(bot.get_all_channels(), name="muted-lobby-pepe") # TODO configurable
+        channel = discord.utils.get(bot.get_all_channels(), name="meme-bot") # TODO configurable
         if not channel:
             print(f"Channel not found.")
             return
@@ -201,8 +206,7 @@ class DiscordMessageHandler:
             "history": history
         }
 
-        await channel.send(
-            "```json\n"
-            + json.dumps(payload, indent=2, ensure_ascii=False)
-            + "\n```"
-        )
+        prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+        response = LLM.get_response(prompt)
+        if response.message:
+            await channel.send(response.message)
