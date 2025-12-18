@@ -251,6 +251,9 @@ class ConversationWatcher:
     def reset(self, channel_id: int):
         self._active_channels.discard(channel_id)
 
+    def is_active(self, channel_id: int) -> bool:
+        return channel_id in self._active_channels
+
     def start(self):
         if not self._task:
             self._task = asyncio.create_task(self._run())

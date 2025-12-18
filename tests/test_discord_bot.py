@@ -134,3 +134,53 @@ async def test_empty_message_is_ignored(server):
     msg = MockMessage(None, server.sender, server.channel)
     await server.bot.on_message(msg)
     assert server.bot.message_handler.handled_messages == []
+
+@pytest.mark.asyncio
+async def test_bot_triggers_conversation_activity(server):
+    # Reduce interval for test speed
+    server.bot.conversation_watcher.cancel()
+    server.bot.conversation_watcher = server.bot.conversation_watcher.__class__(
+        seconds=0.05,
+        callback=server.bot.on_conversation_activity
+    )
+    server.bot.conversation_watcher.start()
+
+    msg = MockMessage("message", server.sender, server.channel)
+    await server.bot.on_message(msg)
+    assert server.bot.message_handler.handled_messages == []
+    await asyncio.sleep(0.1)
+    assert "conversation_activity" in server.bot.message_handler.handled_messages
+
+@pytest.mark.asyncio
+async def test_conversation_activity_is_reset_after_bot_intervention(server):
+    server.bot.conversation_watcher.cancel()
+    server.bot.conversation_watcher = server.bot.conversation_watcher.__class__(
+        seconds=0.05,
+        callback=server.bot.on_conversation_activity
+    )
+    server.bot.conversation_watcher.start()
+    msg = MockMessage("bisbal", server.sender, server.channel) #keyword
+    await server.bot.on_message(msg)
+    msg = MockMessage("dime", server.bot.user, server.channel)
+    await server.bot.on_message(msg)
+    assert not server.bot.conversation_watcher.is_active(server.channel.id)
+    await asyncio.sleep(0.1)
+    assert server.bot.message_handler.handled_messages.count("conversation_activity") == 0
+
+@pytest.mark.asyncio
+async def test_conversation_activity_is_reset_after_join(server):
+    server.bot.conversation_watcher.cancel()
+    server.bot.conversation_watcher = server.bot.conversation_watcher.__class__(
+        seconds=0.05,
+        callback=server.bot.on_conversation_activity
+    )
+    server.bot.conversation_watcher.start()
+
+    for _ in range(9):
+        msg = MockMessage("spam", server.sender, server.channel)
+        await server.bot.on_message(msg)
+
+    assert server.bot.conversation_watcher.is_active(server.channel.id)
+    await server.bot.on_message(msg) # Trigger join
+    assert "join" in server.bot.message_handler.handled_messages
+    assert not server.bot.conversation_watcher.is_active(server.channel.id)

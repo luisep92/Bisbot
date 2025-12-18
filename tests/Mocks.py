@@ -13,7 +13,10 @@ class MockMessageHandler:
         self.handled_messages.append("inactive")
         self.inactive_calls += 1
 
-        
+    async def handle_conversation_activity(self, bot, active_channels):
+        self.handled_messages.append("conversation_activity")
+
+
 class MockAuthor:
     def __init__(self, name, bot=False, id=1):
         self.display_name = name
