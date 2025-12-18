@@ -73,7 +73,7 @@ class BisbalWrapper():
                 },
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=250,
+            max_tokens=300,
             temperature=0.9,
         )
         
@@ -83,7 +83,7 @@ class BisbalWrapper():
         return response
 
     def store_context(self, response: Response):
-        # Clear memory if context gets too big.
+        # Clear memory if context gets too big. Under investigation.
         # This is done before saving the next proposal in order to remember the last interacion.
         # if len(self.context) > 4000:
         #     self.context = INITIAL_CONTEXT

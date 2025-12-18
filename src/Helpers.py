@@ -210,3 +210,61 @@ class DiscordMessageHandler:
         response = LLM.get_response(prompt)
         if response.message:
             await channel.send(response.message)
+            
+    async def handle_conversation_activity(self, bot, active_channels: set[int]):
+        """
+        Handles detected conversation activity in a channel.
+        """
+        for channel_id in active_channels:
+            channel = discord.utils.get(bot.get_all_channels(), id=channel_id)
+            if not channel:
+                continue
+
+            history = bot.message_history.get_formatted(channel_id)
+
+            payload = {
+                "trigger": "conversation_activity",
+                "history": history
+            }
+
+            prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+            response = LLM.get_response(prompt)
+
+            if response.message:
+                await channel.send(response.message)
+
+class ConversationWatcher:
+    """
+    Periodically evaluates whether there has been new activity
+    in any channel since the last check.
+    """
+
+    def __init__(self, seconds: int, callback):
+        self.seconds = seconds
+        self.callback = callback
+        self._active_channels: set[int] = set()
+        self._task: asyncio.Task | None = None
+
+    def mark_activity(self, channel_id: int):
+        self._active_channels.add(channel_id)
+
+    def reset(self, channel_id: int):
+        self._active_channels.discard(channel_id)
+
+    def start(self):
+        if not self._task:
+            self._task = asyncio.create_task(self._run())
+
+    def cancel(self):
+        if self._task and not self._task.done():
+            self._task.cancel()
+
+    async def _run(self):
+        try:
+            while True:
+                await asyncio.sleep(self.seconds)
+                if self._active_channels:
+                    await self.callback(self._active_channels.copy())
+                    self._active_channels.clear()
+        except asyncio.CancelledError:
+            pass
