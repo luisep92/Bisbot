@@ -180,3 +180,29 @@ class DiscordMessageHandler:
             + json.dumps(payload, indent=2, ensure_ascii=False)
             + "\n```"
         )
+
+    async def handle_inactive(self, bot):
+        """
+        Sends an inactivity message to a predefined channel.
+        If the channel does not exist, nothing is sent.
+
+        Args:
+            bot: is expected to be a DiscordBot instance.
+        """
+        channel = discord.utils.get(bot.get_all_channels(), name="muted-lobby-pepe") # TODO configurable
+        if not channel:
+            print(f"Channel not found.")
+            return
+
+        history = bot.message_history.get_formatted(channel.id)
+
+        payload = {
+            "trigger": "inactive",
+            "history": history
+        }
+
+        await channel.send(
+            "```json\n"
+            + json.dumps(payload, indent=2, ensure_ascii=False)
+            + "\n```"
+        )
