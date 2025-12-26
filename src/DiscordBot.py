@@ -46,11 +46,11 @@ class DiscordBot(discord.Client):
         if self._is_mention_to_me(message):
             await self.message_handler.handle(message, trigger="mention", history=history)
             return
-            
+
         if await self._is_reply_to_me(message):
             await self.message_handler.handle(message, trigger="reply", history=history)
             return
-            
+
         if self._contains_keywords(message):
             await self.message_handler.handle(message, trigger="keyword", history=history)
             return
