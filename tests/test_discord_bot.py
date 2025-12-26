@@ -184,3 +184,24 @@ async def test_conversation_activity_is_reset_after_join(server):
     await server.bot.on_message(msg) # Trigger join
     assert "join" in server.bot.message_handler.handled_messages
     assert not server.bot.conversation_watcher.is_active(server.channel.id)
+
+
+@pytest.mark.asyncio
+async def test_invalid_llm_json_does_not_crash(server, monkeypatch):
+
+    class FakeResponse:
+        message = None
+        memory_proposal = None
+
+    def fake_get_response(_):
+        raise ValueError("LLM exploded")
+
+    monkeypatch.setattr(
+        "Helpers.LLM.get_response",
+        fake_get_response
+    )
+
+    msg = MockMessage("bisbal", server.sender, server.channel)
+    await server.bot.on_message(msg)
+
+    assert "keyword" in server.bot.message_handler.handled_messages

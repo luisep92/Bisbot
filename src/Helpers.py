@@ -179,7 +179,12 @@ class DiscordMessageHandler:
 
         prompt = json.dumps(payload, indent=2, ensure_ascii=False)
         print("Send: " + prompt)
-        response = LLM.get_response(prompt)
+        try:
+            response = LLM.get_response(prompt)
+        except Exception as e:
+            print("⚠️ LLM error:", e)
+            return
+
         print(f"Response context: {response.memory_proposal}")
         print(f"\033[92mResponse message: {response.message}\033[0m")
         
@@ -207,10 +212,15 @@ class DiscordMessageHandler:
         }
 
         prompt = json.dumps(payload, indent=2, ensure_ascii=False)
-        response = LLM.get_response(prompt)
+        try:
+            response = LLM.get_response(prompt)
+        except Exception as e:
+            print("⚠️ LLM error:", e)
+            return
+
         if response.message:
             await channel.send(response.message)
-            
+
     async def handle_conversation_activity(self, bot, active_channels: set[int]):
         """
         Handles detected conversation activity in a channel.
@@ -228,7 +238,11 @@ class DiscordMessageHandler:
             }
 
             prompt = json.dumps(payload, indent=2, ensure_ascii=False)
-            response = LLM.get_response(prompt)
+            try:
+                response = LLM.get_response(prompt)
+            except Exception as e:
+                print("⚠️ LLM error:", e)
+                return
 
             if response.message:
                 await channel.send(response.message)

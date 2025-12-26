@@ -50,9 +50,14 @@ class Response:
         received_message: is expected to be in json format
     """
     def __init__(self, received_message: str):
-        self._msg = json.loads(received_message)
-        self.message: str = self._msg["response"]
-        self.memory_proposal: str | None = self._msg["context"]
+        try:
+            self._msg = json.loads(received_message)
+            self.message = self._msg.get("response")
+            self.memory_proposal = self._msg.get("context")
+        except Exception as e:
+            print("⚠️ Invalid LLM JSON:", received_message)
+            self.message = None
+            self.memory_proposal = None
 
 
 class BisbalWrapper():
@@ -90,7 +95,7 @@ class BisbalWrapper():
         
         if response.memory_proposal is not None:
             self.context += f"\n{response.memory_proposal}"
-        
+
 
 # Console test
 if __name__ == "__main__":
