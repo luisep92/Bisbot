@@ -25,7 +25,7 @@ class MessageHistory:
         # channel_id -> deque[(author, content)]
         self.history: dict[int, deque[tuple[str, str]]] = {}
 
-    def add(self, message: discord.Message) -> None:
+    def add(self, message: discord.Message, is_self: bool = False) -> None:
         """
         Add a message to the history of its channel.
 
@@ -39,8 +39,14 @@ class MessageHistory:
         if channel_id not in self.history:
             self.history[channel_id] = deque(maxlen=self.max_messages)
 
+        author = (
+            f"{message.author.display_name} (you)"
+            if is_self
+            else message.author.display_name
+        )
+
         self.history[channel_id].append(
-            (message.author.display_name, message.content)
+            (author, message.content)
         )
 
     def get_formatted(self, channel_id: int) -> str:

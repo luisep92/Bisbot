@@ -116,7 +116,7 @@ Rex: entonces para tener tu mapa rankeado tienes que tener bastante buena calida
 (Washed) Cobayo: yo moddeo mapas que me gusten
 (Washed) Cobayo: o sea mapas de complex frequency
 Deir: pero como es esto de que bisbal ha comprado el server?
-"""
+""".strip()
 
 history7 = """
 Rex: también te digo que ahora hay estándares de calidad más altos
@@ -127,7 +127,7 @@ Rex: entonces para tener tu mapa rankeado tienes que tener bastante buena calida
 Deir: pero como es esto de que bisbal ha comprado el server?
 David Bisbal(you): ¡Hola a todos! Sí, he aterrizado en el servidor y estoy listo para disfrutar de la buena música y los buenos mapas. Y hablando de mapas, ¡me encanta saber que hay tanta calidad en lo que hacen! ¿Quién tiene un mapa favorito para que lo probemos juntos?
 Rex: oye bisbal, como hago un contador en COBOL?
-"""
+""".strip()
 
 if __name__ == "__main__":
-    test_formatted_history(history7)
+    test_formatted_history(history3)

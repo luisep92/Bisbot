@@ -28,7 +28,7 @@ class DiscordBot(discord.Client):
         if message.author == self.user:
             channel = message.channel.id
             self.message_counter.reset(channel)
-            self.message_history.add(message)
+            self.message_history.add(message, is_self=True)
             self.inactive_timer.reset()
             self.conversation_watcher.reset(channel)
             return
