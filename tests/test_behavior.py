@@ -1,11 +1,14 @@
 import sys
 import json
+import pytest
 from pathlib import Path
+
+pytest.skip("manual test", allow_module_level=True)
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-
 from GptWrapper import BisbalWrapper
+
 
 def test_formatted_history(history: str):
     bot = BisbalWrapper()
@@ -127,6 +130,18 @@ Rex: entonces para tener tu mapa rankeado tienes que tener bastante buena calida
 Deir: pero como es esto de que bisbal ha comprado el server?
 David Bisbal(you): ¡Hola a todos! Sí, he aterrizado en el servidor y estoy listo para disfrutar de la buena música y los buenos mapas. Y hablando de mapas, ¡me encanta saber que hay tanta calidad en lo que hacen! ¿Quién tiene un mapa favorito para que lo probemos juntos?
 Rex: oye bisbal, como hago un contador en COBOL?
+""".strip()
+
+
+history8 = """
+Rex: también te digo que ahora hay estándares de calidad más altos
+Rex: entonces para tener tu mapa rankeado tienes que tener bastante buena calidad de mapa en el 99% de los casos
+(Washed) Cobayo: Bien hecho llorando en la llorería
+(Washed) Cobayo: yo moddeo mapas que me gusten
+(Washed) Cobayo: o sea mapas de complex frequency
+Deir: pero como es esto de que bisbal ha comprado el server?
+David Bisbal(you): ¡Hola a todos! Sí, he aterrizado en el servidor y estoy listo para disfrutar de la buena música y los buenos mapas. Y hablando de mapas, ¡me encanta saber que hay tanta calidad en lo que hacen! ¿Quién tiene un mapa favorito para que lo probemos juntos?
+Rex: ojala alguien supiera como hacer un contador en COBOL
 """.strip()
 
 if __name__ == "__main__":
