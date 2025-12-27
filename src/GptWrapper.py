@@ -74,6 +74,12 @@ INTERACTION_RULES = (
     "- Keep it brief and natural.\n"
     "- Do not force humor or start a new topic when greeting.\n\n"
 
+    "COMMAND MODE:\n"
+    "If trigger is \"command\":\n"
+    "- You MUST always produce a response.\n"
+    "- Do NOT decide whether to speak.\n"
+    "- Ignore social participation rules.\n\n"
+
     "When deciding whether to speak, consider the overall conversation topic, "
     "the social context, and whether your message would feel welcome.\n"
 )

@@ -262,6 +262,30 @@ class DiscordMessageHandler:
             if response.message:
                 await channel.send(response.message)
 
+    async def handle_command(self, bot, target_channel, prompt: str):
+        history = bot.message_history.get_formatted(target_channel.id)
+        payload = {
+            "trigger": "command",
+            "command": prompt,
+            "history": history,
+        }
+        prompt = json.dumps(payload, ensure_ascii=False)
+        print("Send: " + prompt)
+        try:
+            response = self.llm.get_response(prompt)
+        except Exception as e:
+            print("⚠️ LLM error:", e)
+            return
+
+        print(f"Response context: {response.memory_proposal}")
+        print(f"\033[92mResponse message: {response.message}\033[0m")
+
+        if response.message:
+            await target_channel.send(response.message)
+            return response.message
+
+        return "None"
+
 class ConversationWatcher:
     """
     Periodically evaluates whether there has been new activity

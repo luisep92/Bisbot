@@ -1,6 +1,8 @@
 import discord
+import json
 from GptWrapper import BisbalWrapper
 from Config import Config
+from discord import app_commands
 from Helpers import MessageCounter, MessageHistory, InactiveTimer, DiscordMessageHandler, ConversationWatcher
 
 class DiscordBot(discord.Client):
@@ -24,10 +26,32 @@ class DiscordBot(discord.Client):
         await self.message_handler.handle_inactive(self)
         self.inactive_timer.reset()
 
+    async def on_slash_command(self, interaction: discord.Interaction, channel_name: str, prompt: str):
+        # Only allow from test channels
+        if interaction.channel_id not in self.test_channels:
+            print("Commands are only allowed in test channels.")
+            return
+
+        target_channel = discord.utils.get(self.get_all_channels(), name=channel_name)
+        if not target_channel:
+            await interaction.response.send_message(f"Channel '{channel_name}' not found.", ephemeral=True)
+            return
+        
+        await interaction.response.defer(ephemeral=True)
+        response = await self.message_handler.handle_command(self, target_channel, prompt)
+        await interaction.followup.send(f"Response: {response}", ephemeral=True)
+
     async def on_ready(self):
         print(f"Connected as {self.user}")
         self.config = self.config.read()
         self._load_config(self.config)
+        tree = app_commands.CommandTree(self)
+
+        @tree.command(name="bisbal")
+        async def bisbal(interaction: discord.Interaction, channel: str, prompt: str):
+            await self.on_slash_command(interaction, channel, prompt)
+
+        await tree.sync()
         self.inactive_timer.init()
         self.conversation_watcher.start()
 
