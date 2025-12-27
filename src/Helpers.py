@@ -199,7 +199,7 @@ class DiscordMessageHandler:
         Args:
             bot: is expected to be a DiscordBot instance.
         """
-        channel = discord.utils.get(bot.get_all_channels(), name="meme-bot") # TODO configurable
+        channel = discord.utils.get(bot.get_all_channels(), name="general") # TODO configurable
         if not channel:
             print(f"Channel not found.")
             return

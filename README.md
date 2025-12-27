@@ -82,8 +82,8 @@ Example:
 
 ```json
 {
-  "allowed_channels": ["meme-bot"],
-  "test_channels": ["muted-lobby-pepe"],
+  "allowed_channels": ["general"],
+  "test_channels": ["muted-lobby"],
   "keywords": ["bisbal", "buleria", "camina"],
   "context_file": "context.txt"
 }

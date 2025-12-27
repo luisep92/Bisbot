@@ -30,7 +30,7 @@ class DiscordBot(discord.Client):
     async def on_slash_command(self, interaction: discord.Interaction, channel_name: str, prompt: str):
         # Only allow from test channels
         if interaction.channel_id not in self.test_channels:
-            print("Commands are only allowed in test channels.")
+            await interaction.response.send_message(f"Channel '{channel_name}' is not a test channel.", ephemeral=True)
             return
 
         target_channel = discord.utils.get(self.get_all_channels(), name=channel_name)
@@ -48,8 +48,8 @@ class DiscordBot(discord.Client):
         self._load_config(self.config)
         tree = app_commands.CommandTree(self)
 
-        @tree.command(name="bisbal")
-        async def bisbal(interaction: discord.Interaction, channel: str, prompt: str):
+        @tree.command(name="bisbot")
+        async def bisbot(interaction: discord.Interaction, channel: str, prompt: str):
             await self.on_slash_command(interaction, channel, prompt)
 
         await tree.sync()
