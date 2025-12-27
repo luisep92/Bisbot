@@ -21,6 +21,8 @@ class Config:
         # Channels used for testing purposes.
         # You may want to include one to send private commands to the bot.
         self.test_channels = []
+        # Keywords that trigger the bot to respond.
+        self.keywords = []
 
 
     def read(self, path: str = "config/config.json") -> "Config":
@@ -40,6 +42,7 @@ class Config:
         self.max_tokens_response = data.get("max_tokens_response", self.max_tokens_response)
         self.allowed_channels = data.get("allowed_channels", self.allowed_channels)
         self.test_channels = data.get("test_channels", self.test_channels)
+        self.keywords = data.get("keywords", self.keywords)
 
         # Load external context file if present
         context_file = data.get("context_file")
@@ -76,6 +79,7 @@ class Config:
             "max_tokens_response": self.max_tokens_response,
             "allowed_channels": self.allowed_channels,
             "test_channels": self.test_channels,
+            "keywords": self.keywords,
             "context_file": "context.txt",
         }
 

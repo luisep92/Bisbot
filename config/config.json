@@ -2,7 +2,8 @@
   "response_use_llm": false,
   "max_context_length": 12000,
   "max_tokens_response": 500,
-  "allowed_channels": [],
-  "test_channels": [],
-  "context_file": "context.txt"
+  "allowed_channels": ["meme-bot"],
+  "test_channels": ["muted-lobby-pepe"],
+  "context_file": "context.txt",
+  "keywords": ["david", "bisbal", "buleria", "bulería", "camina", "babel", "almeria", "almería", "maquinas", "máquinas", "makinas", "latino", "tu", "tú"]
 }

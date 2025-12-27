@@ -18,6 +18,7 @@ class DiscordBot(discord.Client):
         self.inactive_timer = InactiveTimer(seconds = 30 * 60, callback = self.on_inactive)
         self.permitted_channels: set[int] = set()  # If empty, all channels are permitted
         self.test_channels: set[int] = set()
+        self.keywords: list[str] = []
 
     async def on_conversation_activity(self, active_channels: set[int]):
         await self.message_handler.handle_conversation_activity(self, active_channels)
@@ -118,16 +119,7 @@ class DiscordBot(discord.Client):
             return False
 
         text = message.content.lower()
-        keywords = [
-            "david", "bisbal",
-            "buleria", "bulería",
-            "camina",
-            "babel",
-            "almeria", "almería",
-            "maquinas", "máquinas", "makinas",
-            "latino"
-        ]
-        return any(keyword in text for keyword in keywords)
+        return any(keyword in text for keyword in self.keywords)
 
     def _load_config(self, config: Config):
         self.permitted_channels = {
@@ -141,6 +133,7 @@ class DiscordBot(discord.Client):
             for ch in self.get_all_channels()
             if ch.name in config.test_channels
         }
+        self.keywords = [k.lower() for k in config.keywords]
 
     def is_allowed_channel(self, channel_id: int) -> bool:
         # Empty list mean all channels are allowed

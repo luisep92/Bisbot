@@ -34,6 +34,7 @@ async def server():
     bot = MockDiscordBot(fake_llm)
     bot._test_user = MockAuthor("BisbalBot", bot=True, id=999)
     bot.message_handler = MockMessageHandler(fake_llm)
+    bot.keywords = ["bisbal"]
 
     return SimpleNamespace(
         bot=bot,
