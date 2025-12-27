@@ -5,6 +5,9 @@ It is intentionally **not** a command-only bot: it listens, waits, and decides *
 
 The current personality is a humorous version of **David Bisbal** integrated into the *Beat Saber España* Discord server, but the architecture is generic, reusable and easily adaptable through configuration.
 
+**⚠️ Context:** This bot was created for December 28th (Spain's "Día de los Inocentes" / April Fools).
+It's designed to run for one day as a humorous prank, not for long-term production use.
+
 ---
 
 ## What Bisbot Actually Does
