@@ -219,11 +219,15 @@ class DiscordMessageHandler:
         }
 
         prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+        print("Send: " + prompt)
         try:
             response = self.llm.get_response(prompt)
         except Exception as e:
             print("⚠️ LLM error:", e)
             return
+
+        print(f"Response context: {response.memory_proposal}")
+        print(f"\033[92mResponse message: {response.message}\033[0m")
 
         if response.message:
             await channel.send(response.message)
@@ -245,11 +249,15 @@ class DiscordMessageHandler:
             }
 
             prompt = json.dumps(payload, indent=2, ensure_ascii=False)
+            print("Send: " + prompt)
             try:
                 response = self.llm.get_response(prompt)
             except Exception as e:
                 print("⚠️ LLM error:", e)
                 return
+
+            print(f"Response context: {response.memory_proposal}")
+            print(f"\033[92mResponse message: {response.message}\033[0m")
 
             if response.message:
                 await channel.send(response.message)
