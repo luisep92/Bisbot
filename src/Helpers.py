@@ -2,9 +2,7 @@ import discord
 import asyncio
 import json
 from collections import deque # ring buffer
-from GptWrapper import BisbalWrapper
 
-LLM = BisbalWrapper()
 
 class MessageHistory:
     """
@@ -169,6 +167,9 @@ class DiscordMessageHandler:
     """
     Handles incoming messages and sends the bot's response back to Discord.
     """
+    def __init__(self, llm):
+        self.llm = llm
+
     async def handle(self,message: discord.Message, trigger: str, history: str):
         content = message.content
         for user in message.mentions:
@@ -186,7 +187,7 @@ class DiscordMessageHandler:
         prompt = json.dumps(payload, indent=2, ensure_ascii=False)
         print("Send: " + prompt)
         try:
-            response = LLM.get_response(prompt)
+            response = self.llm.get_response(prompt)
         except Exception as e:
             print("⚠️ LLM error:", e)
             return
@@ -219,7 +220,7 @@ class DiscordMessageHandler:
 
         prompt = json.dumps(payload, indent=2, ensure_ascii=False)
         try:
-            response = LLM.get_response(prompt)
+            response = self.llm.get_response(prompt)
         except Exception as e:
             print("⚠️ LLM error:", e)
             return
@@ -245,7 +246,7 @@ class DiscordMessageHandler:
 
             prompt = json.dumps(payload, indent=2, ensure_ascii=False)
             try:
-                response = LLM.get_response(prompt)
+                response = self.llm.get_response(prompt)
             except Exception as e:
                 print("⚠️ LLM error:", e)
                 return

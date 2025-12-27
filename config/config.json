@@ -4,5 +4,5 @@
   "max_tokens_response": 500,
   "allowed_channels": [],
   "test_channels": [],
-  "context_file": "config/config.json"
+  "context_file": "context.txt"
 }

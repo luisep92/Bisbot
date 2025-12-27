@@ -7,6 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
 import pytest
+from Config import Config
 from Mocks import (
     MockAuthor,
     MockChannel,
@@ -24,9 +25,15 @@ async def server():
     - channel: The channel where the conversation takes place (MockChannel)
     - sender: The user who sent the message (MockAuthor)
     """
-    bot = MockDiscordBot()
+    fake_llm = SimpleNamespace(
+        get_response=lambda prompt: SimpleNamespace(
+            message="ok",
+            memory_proposal=None
+        )
+    )
+    bot = MockDiscordBot(fake_llm)
     bot._test_user = MockAuthor("BisbalBot", bot=True, id=999)
-    bot.message_handler = MockMessageHandler()
+    bot.message_handler = MockMessageHandler(fake_llm)
 
     return SimpleNamespace(
         bot=bot,
@@ -197,9 +204,37 @@ async def test_invalid_llm_json_does_not_crash(server, monkeypatch):
         raise ValueError("LLM exploded")
 
     monkeypatch.setattr(
-        "Helpers.LLM.get_response",
+        server.bot.message_handler.llm,
+        "get_response",
         fake_get_response
     )
+
+    msg = MockMessage("bisbal", server.sender, server.channel)
+    await server.bot.on_message(msg)
+
+    assert "keyword" in server.bot.message_handler.handled_messages
+
+@pytest.mark.asyncio
+async def test_bot_responds_when_no_permitted_channels(server):
+    server.bot.permitted_channels = set()
+
+    msg = MockMessage("bisbal", server.sender, server.channel)
+    await server.bot.on_message(msg)
+
+    assert "keyword" in server.bot.message_handler.handled_messages
+
+@pytest.mark.asyncio
+async def test_bot_ignores_message_in_non_permitted_channel(server):
+    server.bot.permitted_channels = {999}  # distinto al canal real
+
+    msg = MockMessage("bisbal", server.sender, server.channel)
+    await server.bot.on_message(msg)
+
+    assert server.bot.message_handler.handled_messages == []
+
+@pytest.mark.asyncio
+async def test_bot_responds_in_permitted_channel(server):
+    server.bot.permitted_channels = {server.channel.id}
 
     msg = MockMessage("bisbal", server.sender, server.channel)
     await server.bot.on_message(msg)

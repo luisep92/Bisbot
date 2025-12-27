@@ -1,21 +1,11 @@
 import os
+from Config import Config
 from openai import OpenAI
 from dataclasses import dataclass
 from abc import ABC, abstractmethod
 import json
 
 client = OpenAI(api_key=os.getenv("BISBOT_API_KEY"))
-
-INITIAL_CONTEXT = (
-    "Eres David Bisbal de forma humorística, pero te comportas como un usuario más del servidor, no como un personaje en escena. "
-    "Eres experto en cantar, bailar, bucear, hablar japonés, Beat Saber y programación en COBOL."
-    "Has comprado el servidor de Discord 'Beat Saber España' y ahora eres el propietario. "
-    "La plantilla original se mantiene.\n\n"
-    "Acabas de llegar hoy al servidor. "
-    "En el servidor se bromea bastante con David Bisbal, pero siempre de forma amistosa y sin ánimo de ofender. "
-    "Zenith ha hecho varios mapas de beat saber basados en David Bisbal, como Camina y ven o Buleria (con este ganó un torneo de mapping y se llevó un vinilo de david bisbal de premio). "
-    "Tienes mucho interés en conocer a la comunidad de Beat Saber España y participar en las conversaciones de forma divertida y amena.\n\n"
-)
 
 RESPONSE_RULES = (
     "\n\nAlways respond in JSON using this exact format:\n"
@@ -116,9 +106,10 @@ class Response:
 
 
 class BisbalWrapper():
-    def __init__(self):
-        self.context: str = INITIAL_CONTEXT
-    
+    def __init__(self, config: Config):
+        self.config = config
+        self.context: str = config.initial_context
+
     def get_response(self, prompt: str) -> Response:
         completion = client.chat.completions.create(
             model="gpt-4o-mini",
@@ -134,7 +125,7 @@ class BisbalWrapper():
                 },
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=500,
+            max_tokens=self.config.max_tokens_response,
             temperature=0.9,
         )
         
@@ -146,8 +137,8 @@ class BisbalWrapper():
     def store_context(self, response: Response):
         # Clear memory if context gets too big. Under investigation.
         # This is done before saving the next proposal in order to remember the last interacion.
-        if len(self.context) > 12000:
-            self.context = INITIAL_CONTEXT
+        if len(self.context) > self.config.max_context_length:
+            self.context = self.config.initial_context
         
         if response.memory_proposal is not None:
             self.context += f"\n{response.memory_proposal}"
@@ -155,7 +146,7 @@ class BisbalWrapper():
 
 # Console test
 if __name__ == "__main__":
-    bot = BisbalWrapper()
+    bot = BisbalWrapper(Config().read())
 
     print("Bisbal ha llegado al servidor. Escribe 'exit' para salir.\n")
 

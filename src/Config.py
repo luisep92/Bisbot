@@ -23,7 +23,6 @@ class Config:
         self.test_channels = []
 
 
-
     def read(self, path: str = "config/config.json") -> "Config":
         config_path = Path(path)
 
@@ -77,7 +76,7 @@ class Config:
             "max_tokens_response": self.max_tokens_response,
             "allowed_channels": self.allowed_channels,
             "test_channels": self.test_channels,
-            "context_file": DEFAULT_CONTEXT_PATH,
+            "context_file": "context.txt",
         }
 
     def to_json(self) -> str:

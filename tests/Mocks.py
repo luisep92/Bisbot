@@ -2,7 +2,8 @@ import discord
 from DiscordBot import DiscordBot
   
 class MockMessageHandler:
-    def __init__(self):
+    def __init__(self, llm):
+        self.llm = llm
         self.handled_messages = []
         self.inactive_calls = 0
         

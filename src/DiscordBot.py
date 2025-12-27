@@ -1,16 +1,21 @@
 import discord
+from GptWrapper import BisbalWrapper
+from Config import Config
 from Helpers import MessageCounter, MessageHistory, InactiveTimer, DiscordMessageHandler, ConversationWatcher
 
 class DiscordBot(discord.Client):
-    def __init__(self):
+    def __init__(self, llm):
         intents = discord.Intents.default()
         intents.message_content = True
         super().__init__(intents=intents)
+        self.config = Config()
         self.message_counter = MessageCounter()
         self.message_history = MessageHistory()
-        self.message_handler = DiscordMessageHandler()
+        self.message_handler = DiscordMessageHandler(llm)
         self.conversation_watcher = ConversationWatcher(seconds=30, callback=self.on_conversation_activity)
         self.inactive_timer = InactiveTimer(seconds = 30 * 60, callback = self.on_inactive)
+        self.permitted_channels: set[int] = set()  # If empty, all channels are permitted
+        self.test_channels: set[int] = set()
 
     async def on_conversation_activity(self, active_channels: set[int]):
         await self.message_handler.handle_conversation_activity(self, active_channels)
@@ -21,10 +26,18 @@ class DiscordBot(discord.Client):
 
     async def on_ready(self):
         print(f"Connected as {self.user}")
+        self.config = self.config.read()
+        self._load_config(self.config)
         self.inactive_timer.init()
         self.conversation_watcher.start()
 
     async def on_message(self, message: discord.Message):
+        if self.permitted_channels and message.channel.id not in self.permitted_channels:
+            return
+
+        if message.channel.id in self.test_channels:
+            pass # TODO Slash commands private testing
+
         if message.author == self.user:
             channel = message.channel.id
             self.message_counter.reset(channel)
@@ -91,4 +104,16 @@ class DiscordBot(discord.Client):
             "latino"
         ]
         return any(keyword in text for keyword in keywords)
-        
+
+    def _load_config(self, config: Config):
+        self.permitted_channels = {
+            ch.id
+            for ch in self.get_all_channels()
+            if ch.name in config.allowed_channels
+        }
+
+        self.test_channels = {
+            ch.id
+            for ch in self.get_all_channels()
+            if ch.name in config.test_channels
+        }
