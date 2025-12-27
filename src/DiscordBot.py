@@ -32,7 +32,7 @@ class DiscordBot(discord.Client):
         self.conversation_watcher.start()
 
     async def on_message(self, message: discord.Message):
-        if self.permitted_channels and message.channel.id not in self.permitted_channels:
+        if not self.is_allowed_channel(message.channel.id):
             return
 
         if message.channel.id in self.test_channels:
@@ -117,3 +117,16 @@ class DiscordBot(discord.Client):
             for ch in self.get_all_channels()
             if ch.name in config.test_channels
         }
+
+    def is_allowed_channel(self, channel_id: int) -> bool:
+        # Empty list mean all channels are allowed
+        if not self.permitted_channels:
+            return True
+
+        if channel_id in self.test_channels:
+            return True
+
+        if channel_id not in self.permitted_channels:
+            return False
+
+        return True
