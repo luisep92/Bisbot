@@ -37,15 +37,8 @@ class MessageHistory:
         if channel_id not in self.history:
             self.history[channel_id] = deque(maxlen=self.max_messages)
 
-        author = (
-            f"{message.author.display_name} (you)"
-            if is_self
-            else message.author.display_name
-        )
-
-        self.history[channel_id].append(
-            (author, message.content)
-        )
+        author = (f"{message.author.display_name} (you)" if is_self else message.author.display_name)
+        self.history[channel_id].append((author, message.content))
 
     def get_formatted(self, channel_id: int) -> str:
         """
@@ -189,7 +182,7 @@ class DiscordMessageHandler:
         try:
             response = self.llm.get_response(prompt)
         except Exception as e:
-            print("⚠️ LLM error:", e)
+            print("LLM error:", e)
             return
 
         print(f"Response context: {response.memory_proposal}")
@@ -223,7 +216,7 @@ class DiscordMessageHandler:
         try:
             response = self.llm.get_response(prompt)
         except Exception as e:
-            print("⚠️ LLM error:", e)
+            print("LLM error:", e)
             return
 
         print(f"Response context: {response.memory_proposal}")
@@ -253,7 +246,7 @@ class DiscordMessageHandler:
             try:
                 response = self.llm.get_response(prompt)
             except Exception as e:
-                print("⚠️ LLM error:", e)
+                print("LLM error:", e)
                 return
 
             print(f"Response context: {response.memory_proposal}")
@@ -274,7 +267,7 @@ class DiscordMessageHandler:
         try:
             response = self.llm.get_response(prompt)
         except Exception as e:
-            print("⚠️ LLM error:", e)
+            print("LLM error:", e)
             return
 
         print(f"Response context: {response.memory_proposal}")

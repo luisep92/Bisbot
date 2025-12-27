@@ -19,7 +19,6 @@ class Config:
         # Which channels the bot is allowed to operate in. Empty list means all channels are allowed.
         self.allowed_channels = []
         # Channels used for testing purposes.
-        # You may want to include one to send private commands to the bot.
         self.test_channels = []
         # Keywords that trigger the bot to respond.
         self.keywords = []

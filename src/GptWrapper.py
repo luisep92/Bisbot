@@ -166,5 +166,5 @@ if __name__ == "__main__":
             print(response._msg)
             print(f"\033[92mBisbal: {response.message}\033[0m\n")
         except Exception as e:
-            print("⚠️ Error:", e)
+            print("Error:", e)
             break

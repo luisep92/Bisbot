@@ -218,7 +218,6 @@ async def test_invalid_llm_json_does_not_crash(server, monkeypatch):
 @pytest.mark.asyncio
 async def test_bot_responds_when_no_permitted_channels(server):
     server.bot.permitted_channels = set()
-
     msg = MockMessage("bisbal", server.sender, server.channel)
     await server.bot.on_message(msg)
 
@@ -226,8 +225,7 @@ async def test_bot_responds_when_no_permitted_channels(server):
 
 @pytest.mark.asyncio
 async def test_bot_ignores_message_in_non_permitted_channel(server):
-    server.bot.permitted_channels = {999}  # distinto al canal real
-
+    server.bot.permitted_channels = {999}
     msg = MockMessage("bisbal", server.sender, server.channel)
     await server.bot.on_message(msg)
 
@@ -236,7 +234,6 @@ async def test_bot_ignores_message_in_non_permitted_channel(server):
 @pytest.mark.asyncio
 async def test_bot_responds_in_permitted_channel(server):
     server.bot.permitted_channels = {server.channel.id}
-
     msg = MockMessage("bisbal", server.sender, server.channel)
     await server.bot.on_message(msg)
 
