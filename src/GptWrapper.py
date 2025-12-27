@@ -117,6 +117,12 @@ class BisbalWrapper():
         self.context: str = config.initial_context
 
     def get_response(self, prompt: str) -> Response:
+        if not self.config.response_use_llm:
+            print("=== LLM DISABLED ===")
+            print(prompt)
+            print("====================")
+            return Response(json.dumps({"response": prompt, "context": None}))
+
         completion = client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
