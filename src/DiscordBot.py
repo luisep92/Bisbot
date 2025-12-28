@@ -30,7 +30,7 @@ class DiscordBot(discord.Client):
     async def on_slash_command(self, interaction: discord.Interaction, channel_name: str, prompt: str):
         # Only allow from test channels
         if interaction.channel_id not in self.test_channels:
-            await interaction.response.send_message(f"Channel '{channel_name}' is not a test channel.", ephemeral=True)
+            await interaction.response.send_message(f"Channel '{interaction.channel.name}' is not a test channel.", ephemeral=True)
             return
 
         target_channel = discord.utils.get(self.get_all_channels(), name=channel_name)

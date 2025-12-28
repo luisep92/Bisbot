@@ -1,9 +1,9 @@
 {
-  "response_use_llm": false,
+  "response_use_llm": true,
   "max_context_length": 12000,
   "max_tokens_response": 500,
-  "allowed_channels": ["meme-bot"],
-  "test_channels": ["muted-lobby-pepe"],
+  "allowed_channels": ["general", "consejos-soporte", "mapas-discusion", "multijugador-torneos", "flexing-flexing", "memes", "música", "arte", "lloreria", "off-topic", "programacion-desarrollo", "mascotas", "quedadas-irl-eventos", "otros-juegos", "juegos-de-ritmo", "muted-lobby"],
+  "test_channels": ["test-pruebas"],
   "context_file": "context.txt",
-  "keywords": ["david", "bisbal", "buleria", "bulería", "camina", "babel", "almeria", "almería", "maquinas", "máquinas", "makinas", "latino", "tu", "tú"]
+  "keywords": ["david", "bisbal", "buleria", "bulería", "camina", "babel", "almeria", "almería", "maquinas", "máquinas", "makinas", "latino", "tu", "tú", "oye", "corazon", "corazón", "mapa"]
 }
