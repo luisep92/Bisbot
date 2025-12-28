@@ -128,7 +128,7 @@ Several mechanisms prevent spam and awkward behavior:
 * **MessageCounter** — joins only after N messages
 * **MessageHistory** — rolling per-channel context
 * **ConversationWatcher** — periodic evaluation of active chats
-* **InactiveTimer** — reactivates dead channels carefully
+* **InactiveTimer** — try to keep the conversation alive in a specified channel, if the entire server is in silence.
 
 Priority rules are enforced:
 
